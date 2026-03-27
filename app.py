@@ -1,31 +1,11 @@
 # ================================
-# Advanced Scientific Calculator
+# Scientific Calculator (FIXED)
 # ================================
 
 import streamlit as st
 import math
 
-# -------------------------------
-# Page Config
-# -------------------------------
-st.set_page_config(page_title="Scientific Calculator", layout="centered")
-
-# -------------------------------
-# Styling (Dark Mode)
-# -------------------------------
-st.markdown("""
-<style>
-.stTextInput input {
-    font-size: 28px !important;
-    text-align: right;
-}
-button {
-    height: 60px;
-    font-size: 18px !important;
-    border-radius: 10px;
-}
-</style>
-""", unsafe_allow_html=True)
+st.set_page_config(page_title="Calculator", layout="centered")
 
 # -------------------------------
 # Session State
@@ -37,7 +17,7 @@ if "history" not in st.session_state:
     st.session_state.history = []
 
 # -------------------------------
-# Safe Evaluation
+# Functions
 # -------------------------------
 def evaluate_expression(expr):
     try:
@@ -49,19 +29,13 @@ def evaluate_expression(expr):
             "tan": math.tan,
             "log": math.log10,
             "sqrt": math.sqrt,
-            "factorial": math.factorial,
-            "pi": math.pi,
-            "e": math.e
+            "factorial": math.factorial
         }
 
-        result = eval(expr, {"__builtins__": None}, allowed)
-        return result
+        return eval(expr, {"__builtins__": None}, allowed)
     except:
         return "Error"
 
-# -------------------------------
-# Button Functions
-# -------------------------------
 def press(val):
     st.session_state.expression += str(val)
 
@@ -80,19 +54,20 @@ def calculate():
 # -------------------------------
 # Title
 # -------------------------------
-st.title("🧮 Scientific Calculator")
+st.title("🧮 Calculator")
 
 # -------------------------------
 # Display (FIXED)
 # -------------------------------
-st.session_state.expression = st.text_input(
+st.text_input(
     "Display",
     value=st.session_state.expression,
-    key="display"
+    key="display",
+    disabled=True   # IMPORTANT 🔥
 )
 
 # -------------------------------
-# Buttons Layout
+# Buttons
 # -------------------------------
 buttons = [
     ["7", "8", "9", "/", "sin("],
@@ -125,12 +100,3 @@ if st.sidebar.button("Clear History"):
 for i, item in enumerate(reversed(st.session_state.history)):
     if st.sidebar.button(item, key=f"hist_{i}"):
         st.session_state.expression = item.split("=")[0].strip()
-
-# -------------------------------
-# Keyboard Input
-# -------------------------------
-user_input = st.text_input("Type Expression & Press Enter")
-
-if user_input:
-    st.session_state.expression = user_input
-    calculate()
