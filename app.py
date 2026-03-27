@@ -11,7 +11,7 @@ import math
 st.set_page_config(page_title="Scientific Calculator", layout="centered")
 
 # -------------------------------
-# Custom Dark Mode Styling
+# Dark Mode Styling
 # -------------------------------
 st.markdown("""
     <style>
@@ -20,7 +20,7 @@ st.markdown("""
         color: white;
     }
     .stTextInput>div>div>input {
-        font-size: 24px;
+        font-size: 28px;
         text-align: right;
     }
     button {
@@ -33,7 +33,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -------------------------------
-# Session State Initialization
+# Session State
 # -------------------------------
 if "expression" not in st.session_state:
     st.session_state.expression = ""
@@ -42,12 +42,10 @@ if "history" not in st.session_state:
     st.session_state.history = []
 
 # -------------------------------
-# Helper Functions
+# Functions
 # -------------------------------
-
 def evaluate_expression(expr):
     try:
-        # Replace math functions for eval
         expr = expr.replace("^", "**")
         expr = expr.replace("sqrt", "math.sqrt")
         expr = expr.replace("sin", "math.sin")
@@ -58,17 +56,14 @@ def evaluate_expression(expr):
 
         result = eval(expr)
         return result
-    except Exception:
+    except:
         return "Error"
-
 
 def button_click(value):
     st.session_state.expression += str(value)
 
-
 def clear():
     st.session_state.expression = ""
-
 
 def calculate():
     expr = st.session_state.expression
@@ -79,21 +74,19 @@ def calculate():
 
     st.session_state.expression = str(result)
 
-
 # -------------------------------
 # Title
 # -------------------------------
 st.title("🧮 Scientific Calculator")
 
 # -------------------------------
-# Display Screen
+# Display
 # -------------------------------
 st.text_input("Display", st.session_state.expression, key="display")
 
 # -------------------------------
-# Button Layout
+# Buttons Layout
 # -------------------------------
-
 buttons = [
     ["7", "8", "9", "/", "sin"],
     ["4", "5", "6", "*", "cos"],
@@ -103,10 +96,10 @@ buttons = [
     ["C"]
 ]
 
-for row in buttons:
+for r, row in enumerate(buttons):
     cols = st.columns(len(row))
-    for i, btn in enumerate(row):
-        if cols[i].button(btn):
+    for c, btn in enumerate(row):
+        if cols[c].button(btn, key=f"btn_{r}_{c}"):
             if btn == "=":
                 calculate()
             elif btn == "C":
@@ -115,22 +108,21 @@ for row in buttons:
                 button_click(btn)
 
 # -------------------------------
-# Sidebar History
+# Sidebar History (FIXED)
 # -------------------------------
 st.sidebar.title("📜 History")
 
 if st.sidebar.button("Clear History"):
     st.session_state.history = []
 
-for item in reversed(st.session_state.history):
-    if st.sidebar.button(item):
-        # Reuse expression
+for i, item in enumerate(reversed(st.session_state.history)):
+    if st.sidebar.button(item, key=f"history_{i}"):
         st.session_state.expression = item.split("=")[0].strip()
 
 # -------------------------------
-# Keyboard Input Support
+# Keyboard Input
 # -------------------------------
-user_input = st.text_input("Type Expression and Press Enter")
+user_input = st.text_input("Type Expression and Press Enter", key="keyboard")
 
 if user_input:
     st.session_state.expression = user_input
