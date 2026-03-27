@@ -1,5 +1,5 @@
 # ================================
-# Scientific Calculator (FIXED)
+# FINAL FIXED CALCULATOR (NO ERRORS)
 # ================================
 
 import streamlit as st
@@ -52,22 +52,20 @@ def calculate():
     st.session_state.expression = str(result)
 
 # -------------------------------
-# Title
+# UI
 # -------------------------------
-st.title("🧮 Calculator")
+st.title("🧮 Scientific Calculator")
 
-# -------------------------------
-# Display (FIXED)
-# -------------------------------
+# Display
 st.text_input(
     "Display",
     value=st.session_state.expression,
-    key="display",
-    disabled=True   # IMPORTANT 🔥
+    key="display_box",
+    disabled=True
 )
 
 # -------------------------------
-# Buttons
+# Buttons (ALL UNIQUE KEYS)
 # -------------------------------
 buttons = [
     ["7", "8", "9", "/", "sin("],
@@ -81,7 +79,9 @@ buttons = [
 for i, row in enumerate(buttons):
     cols = st.columns(len(row))
     for j, btn in enumerate(row):
-        if cols[j].button(btn, key=f"btn_{i}_{j}"):
+        unique_key = f"btn_{i}_{j}_{btn}"   # 🔥 IMPORTANT
+
+        if cols[j].button(btn, key=unique_key):
             if btn == "=":
                 calculate()
             elif btn == "C":
@@ -90,13 +90,16 @@ for i, row in enumerate(buttons):
                 press(btn)
 
 # -------------------------------
-# Sidebar History
+# Sidebar History (FIXED)
 # -------------------------------
 st.sidebar.title("📜 History")
 
-if st.sidebar.button("Clear History"):
+# UNIQUE KEY
+if st.sidebar.button("Clear History", key="clear_history_btn"):
     st.session_state.history = []
 
 for i, item in enumerate(reversed(st.session_state.history)):
-    if st.sidebar.button(item, key=f"hist_{i}"):
+    hist_key = f"history_{i}_{item}"  # 🔥 IMPORTANT
+
+    if st.sidebar.button(item, key=hist_key):
         st.session_state.expression = item.split("=")[0].strip()
